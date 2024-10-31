@@ -1,37 +1,43 @@
-import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
+import { Box, Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import React from "react";
 
-export const CardProduct: React.FC = () => {
+export const CardProduct: React.FC<{ title: string }> = ({ title }) => {
 
     const stock: number = 10;
 
     return (
-        <Card sx={{
-            maxWidth: { xs: "50%", md: "17%" },
-            margin: 1,
+        <Card className="fadeIn" sx={{
+            display: "flex",
+            maxWidth: { xs: "100%", md: "48%", lg: "32%" },
+            maxHeight: "195px",
+            transition: "0.2s",
+            "&:hover": {
+                transform: "scale(1.05)",
+            }
         }}>
             <CardMedia
                 component={"img"}
                 image="https://www.w3schools.com/howto/img_avatar.png"
-                height={150}
                 sx={{
+                    width: { xs: 130, md: 140, lg: 170 },
                     objectFit: "fill",
-                    borderRadius: 1,
-                    border: "1px solid gray",
                 }}
                 alt={"Imagen Producto"}
             />
-            <CardContent>
-                <Typography variant="h6">Titulo del producto</Typography>
-                <Typography component={"p"} variant="body2" paddingY={1}>lorem sdasdasdasdasd Lorem ipsum asdasd</Typography>
-                <Typography component={"p"} variant="body1"><span style={{fontWeight: "bold"}}>Stock:</span> {stock}</Typography>
+            <CardContent sx={{ fontSize: "15px", padding: "10px", "& .MuiTypography-root": { fontSize: "inherit" }, display: "flex", flexDirection: "column" }}>
+                <Box>
+                    <Typography variant="h6">{title}</Typography>
+                    <Typography component="p" variant="body2" paddingY={1}>
+                        lorem sdasdasdasdasd Lorem ipsum asdasd
+                    </Typography>
+                    <Typography component="p" variant="body1">
+                        <span style={{ fontWeight: "bold" }}>Stock:</span> {stock}
+                    </Typography>
+                </Box>
+                <CardActions sx={{ paddingTop: 3, }}>
+                    <Button variant="contained" fullWidth>asd</Button>
+                </CardActions>
             </CardContent>
-            <CardActions >
-                <Button variant="contained" color="info" >
-                    Add
-                </Button>
-            </CardActions>
-
         </Card>
     );
 };

@@ -1,11 +1,10 @@
-import { Box } from "@mui/material";
+import { Box, Grid2 } from "@mui/material";
 import React, { ReactNode } from "react";
 import { NavBar, SideBar } from ".";
 import { InListItemsSidebar } from "../interface";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { logout, toggleSideBar } from "../store/slice";
-
 
 const drawerWidth: number = 240;// Se define el ancho del SIDEBAR
 
@@ -28,16 +27,17 @@ export const DashboardLayout: React.FC<{ children: ReactNode, listItemsSidebar: 
             sx={{ display: "flex" }}>
             <NavBar drawerWidth={drawerWidth} handleMenuClick={handleDrawerToggle} handleLogout={handleLogout} />
             <SideBar drawerWidth={drawerWidth} mobileOpen={isMobilOpen} handleDrawerToggle={handleDrawerToggle} listItems={listItemsSidebar} />
-            <Box component={"main"}
+            <Grid2
                 sx={{
                     width: "100%",
                     border: "1px solid",
                     marginTop: "64px",
-                    paddingX: "15px"
+                    paddingX: "15px",
+                    paddingBottom: "15px"
                 }}
             >
                 {children}
-            </Box>
+            </Grid2>
         </Box>
     );
 };
