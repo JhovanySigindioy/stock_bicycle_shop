@@ -2,11 +2,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { InProduct } from "../../interface";
 
-interface ProductsState {
+export interface InProductsState {
     products: InProduct[];
 }
 
-const initialState: ProductsState = {
+const initialState: InProductsState = {
     products: [],
 };
 

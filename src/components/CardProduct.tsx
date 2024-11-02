@@ -6,24 +6,41 @@ import { InProduct } from "../interface";
 export const CardProduct: React.FC<{ product: InProduct; handleAddToCart: (id: string) => void; }> = ({ product, handleAddToCart }) => {
 
     const handleClick = () => {
-        handleAddToCart(product.id); // Llama a la función cuando se hace clic en el botón
+        if (product.quantity > 0) {
+            handleAddToCart(product.id);
+        }
     };
 
-    return (
-        <Card className="fadeIn" sx={{
-            display: "flex",
-            boxShadow: 3,
-            width: "100%",
-            maxWidth: { xs: "100%", md: "48%", lg: "32%" },
-            maxHeight: "155px",
-            transition: "0.2s",
-            "&:hover": {
-                boxShadow: 12,
-            }
-        }}>
+    const isOutOfStock = product.quantity < 1;
 
+    return (
+        <Card
+            className="fadeIn"
+            sx={{
+                display: "flex",
+                boxShadow: 3,
+                width: "100%",
+                maxWidth: { xs: "100%", md: "48%", lg: "32%" },
+                maxHeight: "155px",
+                transition: "0.2s",
+                position: "relative",
+                opacity: isOutOfStock ? 0.7 : 1, // Opacidad reducida cuando no hay stock
+                backgroundColor: isOutOfStock ? "grey.200" : "white", // Fondo gris cuando no hay stock
+                "&:hover": {
+                    boxShadow: 12,
+                },
+            }}
+        >
             <Box sx={{ width: "100%" }}>
-                <CardContent sx={{ fontSize: "15px", padding: "10px", "& .MuiTypography-root": { fontSize: "inherit" }, display: "flex", flexDirection: "column" }}>
+                <CardContent
+                    sx={{
+                        fontSize: "15px",
+                        padding: "10px",
+                        "& .MuiTypography-root": { fontSize: "inherit" },
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
+                >
                     <Typography variant="h6" sx={{ fontWeight: "bold", mb: 0.5 }}>
                         {product.name}
                     </Typography>
@@ -33,14 +50,23 @@ export const CardProduct: React.FC<{ product: InProduct; handleAddToCart: (id: s
                     <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
                         <Box>
                             <Typography component="p" variant="body1" sx={{ fontWeight: "bold", mb: 0.5 }}>
-                                <span style={{ fontWeight: "normal" }}>Stock:</span> {product.quantity}
+                                <span style={{ fontWeight: "normal" }}>Stock:</span> {isOutOfStock ? "SIN STOCK" : product.quantity}
                             </Typography>
                             <Typography variant="body1" sx={{ fontWeight: "bold", color: "primary.main" }}>
                                 ${product.price.toFixed(2)}
                             </Typography>
                         </Box>
                         <CardActions sx={{ padding: 0, display: "flex", alignItems: "center" }}>
-                            <Button variant="contained" color="primary" onClick={handleClick}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleClick}
+                                disabled={isOutOfStock} // Botón deshabilitado si no hay stock
+                                sx={{
+                                    backgroundColor: isOutOfStock ? "grey.500" : "primary.main",
+                                    "&:hover": { backgroundColor: isOutOfStock ? "grey.500" : "primary.dark" },
+                                }}
+                            >
                                 <ShoppingCartIcon /> +
                             </Button>
                         </CardActions>
@@ -56,6 +82,32 @@ export const CardProduct: React.FC<{ product: InProduct; handleAddToCart: (id: s
                 }}
                 alt={"Imagen Producto"}
             />
+            {isOutOfStock && (
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "rgba(255, 0, 0, 0.1)", // Fondo semitransparente rojo para destacar
+                    }}
+                >
+                    <Box sx={{
+                        backgroundColor: "red",
+                        padding: 1,
+                        borderRadius: 1,
+                        border: "2px solid white"
+                    }}>
+                        <Typography color="white" fontWeight={"bold"}>NO DISPONIBLE</Typography>
+                    </Box>
+
+
+                </Box>
+            )}
         </Card>
     );
 };

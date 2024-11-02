@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { DashboardLayout } from "../../components";
 import { InListItemsSidebar } from "../../interface";
 import { StorePage, CreateProductsPage, ReportsPage, SalesHistoryPage } from "./";
 import { RootState } from "../../store";
 import { RoutesAdmin } from "../../router";
+import { clearCart, hideLoading, setProductsState, showLoading } from "../../store/slice";
+import { getProducts } from "../../api/products";
 
 
 const listItemsSidebar: InListItemsSidebar[] = [
@@ -39,7 +41,21 @@ const listItemsSidebarAdmin: InListItemsSidebar[] = [
 ]
 
 export const DashboardPage: React.FC = () => {
+    
     const { token, rolUser } = useSelector((state: RootState) => state.auth.dataUser);
+    const dispatch = useDispatch();
+    //Se trae los productos desde la bd y se asignan a redux(estado global)
+    useEffect(() => {
+        dispatch(clearCart());
+        dispatch(showLoading());
+        getProducts()
+            .then((response) => {
+                dispatch(setProductsState(response.data));
+                dispatch(hideLoading());
+            })
+            .catch(() => dispatch(hideLoading()));
+    }, [dispatch]);
+
     return (
         <DashboardLayout listItemsSidebar={rolUser === "admin" ? listItemsSidebarAdmin : listItemsSidebar}>
             <Routes>

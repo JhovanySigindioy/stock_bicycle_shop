@@ -1,7 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { authSlice, sliceSideBarState } from "./slice";
-import { sliceLoading } from "./slice/";
-import { sliceProductsState } from "./slice/";
+import { authSlice, sliceSideBarState, sliceLoading, sliceProductsState, sliceCartState } from "./slice";
 
 export const store = configureStore({
     reducer: {
@@ -9,6 +7,7 @@ export const store = configureStore({
         sidebar: sliceSideBarState.reducer,
         loading: sliceLoading.reducer,
         products: sliceProductsState.reducer,
+        cart: sliceCartState.reducer,
     }
 });
 

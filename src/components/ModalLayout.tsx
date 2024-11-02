@@ -5,7 +5,7 @@ import { ModalLayoutProps } from "../interface";
 
 export const ModalLayout: React.FC<ModalLayoutProps> = ({ title, cartOpen, handleCartClose, children }) => {
     return (
-        <Dialog open={cartOpen} onClose={handleCartClose} fullWidth>
+        <Dialog open={cartOpen} onClose={handleCartClose} fullWidth sx={{ margin: 0, padding: 0 }}>
             <IconButton
                 onClick={handleCartClose}
                 sx={{
@@ -25,7 +25,7 @@ export const ModalLayout: React.FC<ModalLayoutProps> = ({ title, cartOpen, handl
             <DialogTitle sx={{ paddingLeft: 3 }}>
                 {title}
             </DialogTitle>
-            <DialogContent>
+            <DialogContent sx={{ margin: 0, padding: 0 }}>
                 {children}
             </DialogContent>
         </Dialog>
