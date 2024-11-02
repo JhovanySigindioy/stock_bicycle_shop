@@ -3,7 +3,11 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import React from "react";
 import { InProduct } from "../interface";
 
-export const CardProduct: React.FC<{ product: InProduct, handleAddToCart: () => void }> = ({ product, handleAddToCart }) => {
+export const CardProduct: React.FC<{ product: InProduct; handleAddToCart: (id: string) => void; }> = ({ product, handleAddToCart }) => {
+
+    const handleClick = () => {
+        handleAddToCart(product.id); // Llama a la función cuando se hace clic en el botón
+    };
 
     return (
         <Card className="fadeIn" sx={{
@@ -18,7 +22,7 @@ export const CardProduct: React.FC<{ product: InProduct, handleAddToCart: () => 
             }
         }}>
 
-            <Box sx={{width: "100%"}}>
+            <Box sx={{ width: "100%" }}>
                 <CardContent sx={{ fontSize: "15px", padding: "10px", "& .MuiTypography-root": { fontSize: "inherit" }, display: "flex", flexDirection: "column" }}>
                     <Typography variant="h6" sx={{ fontWeight: "bold", mb: 0.5 }}>
                         {product.name}
@@ -35,8 +39,8 @@ export const CardProduct: React.FC<{ product: InProduct, handleAddToCart: () => 
                                 ${product.price.toFixed(2)}
                             </Typography>
                         </Box>
-                        <CardActions sx={{ padding: 0, display: "flex", alignItems: "center" }}> {/* Reducir padding */}
-                            <Button variant="contained" color="primary" onClick={handleAddToCart}>
+                        <CardActions sx={{ padding: 0, display: "flex", alignItems: "center" }}>
+                            <Button variant="contained" color="primary" onClick={handleClick}>
                                 <ShoppingCartIcon /> +
                             </Button>
                         </CardActions>
@@ -52,7 +56,6 @@ export const CardProduct: React.FC<{ product: InProduct, handleAddToCart: () => 
                 }}
                 alt={"Imagen Producto"}
             />
-
         </Card>
     );
 };
