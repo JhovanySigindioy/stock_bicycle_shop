@@ -30,7 +30,6 @@ export const DashboardLayout: React.FC<{ children: ReactNode, listItemsSidebar: 
             <Grid2
                 sx={{
                     width: "100%",
-                    border: "1px solid",
                     marginTop: "64px",
                     paddingX: "15px",
                     paddingBottom: "15px"

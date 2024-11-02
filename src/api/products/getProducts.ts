@@ -191,10 +191,10 @@ import { InApiResponse } from "../../interface";
 
 export const getProducts = async (): Promise<InApiResponse> => {
     try {
-        
+
         //const response = await axios.get("https://apimocha.com/sigindioy/products");
-        const response = await axios.get("https://run.mocky.io/v3/cc55e8c7-26d8-4d2a-854a-c1270e400d9e");
-        
+        const response = await axios.get("https://run.mocky.io/v3/a11ad7ec-0c3d-4582-86b5-9673b803d801");
+
         return response.data;
         //return res;
     } catch (error) {

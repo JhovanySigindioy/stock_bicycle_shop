@@ -3,3 +3,7 @@ export * from "./SideBar";
 export * from "./DashboardLayout";
 export * from "./CardProduct";
 export * from "./InputBrowser";
+export * from "./SpinnerLoading";
+export * from "./Pagintation";
+export * from "./ModalLayout";
+export * from "./ShoppingCard";

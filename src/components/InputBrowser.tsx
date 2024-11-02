@@ -1,11 +1,18 @@
 import { Grid2, TextField, InputAdornment } from "@mui/material";
 import SearchRounded from '@mui/icons-material/SearchRounded';
-import React from "react";
+import React, { ChangeEvent } from "react";
 
-export const InputBrowser: React.FC = () => {
+interface InInputBrowserProps {
+    textValue: string;
+    handleOnChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  }
+
+export const InputBrowser: React.FC<InInputBrowserProps> = ({textValue, handleOnChange}) => {
     return (
         <Grid2 container justifyContent={"center"} sx={{ padding: 2 }}>
             <TextField
+                value={textValue}
+                onChange={handleOnChange}
                 variant="outlined"
                 placeholder="Buscar producto..."
                 sx={{

@@ -15,4 +15,10 @@
     animation-fill-mode: both;
 }
 
+.containerScale {
+    transition: 0.2s; /* Sin comillas y con punto y coma */
+}
 
+.containerScale:hover {
+    transform: scale(1.05); /* Selector de pseudo-clase :hover fuera de la definición de la clase */
+}

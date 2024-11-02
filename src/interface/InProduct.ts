@@ -3,6 +3,7 @@ export interface InProduct {
     name: string;
     description: string;
     stock_current: number;
+    price: number;
     category_id: {
         name: string;
         _id: string;
