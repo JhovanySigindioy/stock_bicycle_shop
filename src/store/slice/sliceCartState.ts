@@ -21,16 +21,16 @@ export const sliceCartState = createSlice({
                 state.cartProducts.push({ ...action.payload, quantity: 1 });
             }
         },
-        removeItem: (state, action: PayloadAction<string>) => {
+        removeItem: (state, action: PayloadAction<number>) => {
             state.cartProducts = state.cartProducts.filter(item => item.id !== action.payload);
         },
-        increaseQuantity: (state, action: PayloadAction<string>) => {
+        increaseQuantity: (state, action: PayloadAction<number>) => {
             const item = state.cartProducts.find(item => item.id === action.payload);
             if (item) {
                 item.quantity++;
             }
         },
-        decreaseQuantity: (state, action: PayloadAction<string>) => {
+        decreaseQuantity: (state, action: PayloadAction<number>) => {
             const item = state.cartProducts.find(item => item.id === action.payload);
             if (item) {
                 item.quantity--;

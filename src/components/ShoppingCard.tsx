@@ -8,9 +8,9 @@ import { InProduct } from "../interface";
 
 interface ShoppingCardProps {
     cartProducts: InProduct[];
-    onIncrease: (id: string) => void;
-    onDecrease: (id: string) => void;
-    onRemove: (id: string, quantity: number) => void;
+    onIncrease: (id: number) => void;
+    onDecrease: (id: number) => void;
+    onRemove: (id: number, quantity: number) => void;
     onPurchase: () => void;
 }
 
@@ -46,7 +46,7 @@ export const ShoppingCard: React.FC<ShoppingCardProps> = ({
                         <IconButton color="error" onClick={() => onRemove(item.id, item.quantity)} aria-label="Eliminar producto">
                             <DeleteIcon />
                         </IconButton>
-                        <Typography variant="h6" color="textPrimary">${item.price.toFixed(2)}</Typography>
+                        <Typography variant="h6" color="textPrimary">${item.sale_price}</Typography>
                     </Box>
 
                 </Box>

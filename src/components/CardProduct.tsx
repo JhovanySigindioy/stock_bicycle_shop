@@ -2,8 +2,9 @@ import { Box, Button, Card, CardActions, CardContent, CardMedia, Typography } fr
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import React from "react";
 import { InProduct } from "../interface";
+import { formatPrice } from "../helpers";
 
-export const CardProduct: React.FC<{ product: InProduct; handleAddToCart: (id: string) => void; }> = ({ product, handleAddToCart }) => {
+export const CardProduct: React.FC<{ product: InProduct; handleAddToCart: (id: number) => void; }> = ({ product, handleAddToCart }) => {
 
     const handleClick = () => {
         if (product.quantity > 0) {
@@ -11,7 +12,7 @@ export const CardProduct: React.FC<{ product: InProduct; handleAddToCart: (id: s
         }
     };
 
-    const isOutOfStock = product.quantity < 1;
+    const isOutOfStock: boolean = product.quantity < 1;
 
     return (
         <Card
@@ -41,47 +42,79 @@ export const CardProduct: React.FC<{ product: InProduct; handleAddToCart: (id: s
                         flexDirection: "column",
                     }}
                 >
-                    <Typography variant="h6" sx={{ fontWeight: "bold", mb: 0.5 }}>
+                    <Typography variant="h6" sx={{
+                        fontWeight: "bold", mb: 0.5, display: '-webkit-box',
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        WebkitLineClamp: 2, // Limita a 2 líneas
+                        textOverflow: 'ellipsis', // Agrega puntos suspensivos si hay desbordamiento
+                        minHeight: '3em',
+                        maxHeight: '3em', // Altura máxima para 2 líneas (ajusta según tu tamaño de fuente)
+                        lineHeight: '1.5em'
+                    }}>
                         {product.name}
                     </Typography>
-                    <Typography component="p" variant="body2" sx={{ color: "text.secondary", mb: 0.5 }}>
-                        {product.description}
+                    <Typography
+                        component="p"
+                        variant="body2"
+                        sx={{
+                            color: "text.secondary",
+                            mb: 1.5,
+                            display: '-webkit-box',
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            WebkitLineClamp: 2, // Limita a 2 líneas
+                            textOverflow: 'ellipsis', // Agrega puntos suspensivos si hay desbordamiento
+                            minHeight: '3em',
+                            maxHeight: '3em', // Altura máxima para 2 líneas (ajusta según tu tamaño de fuente)
+                            lineHeight: '1.5em' // Define la altura de la línea
+                        }}
+                    >
+                        {product.description || "Sin descripción"}
                     </Typography>
-                    <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
-                        <Box>
-                            <Typography component="p" variant="body1" sx={{ fontWeight: "bold", mb: 0.5 }}>
-                                <span style={{ fontWeight: "normal" }}>Stock:</span> {isOutOfStock ? "SIN STOCK" : product.quantity}
-                            </Typography>
-                            <Typography variant="body1" sx={{ fontWeight: "bold", color: "primary.main" }}>
-                                ${product.price.toFixed(2)}
-                            </Typography>
-                        </Box>
-                        <CardActions sx={{ padding: 0, display: "flex", alignItems: "center" }}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleClick}
-                                disabled={isOutOfStock} // Botón deshabilitado si no hay stock
-                                sx={{
-                                    backgroundColor: isOutOfStock ? "grey.500" : "primary.main",
-                                    "&:hover": { backgroundColor: isOutOfStock ? "grey.500" : "primary.dark" },
-                                }}
-                            >
-                                <ShoppingCartIcon /> +
-                            </Button>
-                        </CardActions>
+                    <Box display={"flex"} gap={3}>
+                        <Typography component="p" variant="body1" sx={{ fontWeight: "bold" }}>
+                            <span style={{ fontWeight: "normal" }}>Stock:</span> {isOutOfStock ? "SIN STOCK" : product.quantity}
+                        </Typography>
+                        <Typography variant="body1" sx={{ fontWeight: "bold", color: "green" }}>
+                            {formatPrice(product.sale_price)}
+                        </Typography>
                     </Box>
                 </CardContent>
             </Box>
-            <CardMedia
-                component={"img"}
-                image="https://www.w3schools.com/howto/img_avatar.png"
-                sx={{
-                    width: { xs: 130, md: 140, lg: 145 },
-                    objectFit: "fill",
-                }}
-                alt={"Imagen Producto"}
-            />
+
+            <Box display={"flex"} flexDirection={"column"} gap={1} justifyContent={"space-between"} padding={1}>
+                <CardMedia
+                    component={"img"}
+                    image={product.img_product || "https://dummyimage.com/1280x720/fff/aaa"}
+
+                    sx={{
+                        width: { xs: 130, md: 140, lg: 145 },
+                        objectFit: "contain",
+                        border: "2px solid #f5f5f4",
+                        borderRadius: 1
+
+                    }}
+                    alt={"Imagen Producto"}
+                />
+                <CardActions sx={{ padding: 0, display: "flex", alignItems: "center" }}>
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        onClick={handleClick}
+                        disabled={isOutOfStock} // Botón deshabilitado si no hay stock
+                        sx={{
+                            backgroundColor: isOutOfStock ? "grey.500" : "primary.main",
+                            "&:hover": { backgroundColor: isOutOfStock ? "grey.500" : "primary.dark" },
+                        }}
+                    >
+                        <ShoppingCartIcon />Agregar
+                    </Button>
+                </CardActions>
+            </Box>
+
+
             {isOutOfStock && (
                 <Box
                     sx={{
@@ -104,8 +137,6 @@ export const CardProduct: React.FC<{ product: InProduct; handleAddToCart: (id: s
                     }}>
                         <Typography color="white" fontWeight={"bold"}>NO DISPONIBLE</Typography>
                     </Box>
-
-
                 </Box>
             )}
         </Card>

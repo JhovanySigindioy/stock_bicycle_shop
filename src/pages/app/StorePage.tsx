@@ -1,5 +1,5 @@
 // Importaciones necesarias
-import React, { ChangeEvent, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import { Badge, Box, Fab, Grid2 } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -8,6 +8,7 @@ import { CardProduct, InputBrowser, ModalLayout, Pagination, ShoppingCard, Spinn
 import { RootState } from "../../store";
 import { addItem, clearCart, decreaseQuantity, decrementStock, increaseQuantity, incrementStock, removeItem } from "../../store/slice";
 import { InProduct } from "../../interface";
+import { insertSale } from "../../api/products";
 
 const itemsPerPage: number = 9;
 
@@ -71,7 +72,7 @@ export const StorePage: React.FC = () => {
         }
     };
 
-    const handleRemoveFromCart = (id: string, quantity: number) => {
+    const handleRemoveFromCart = (id: number, quantity: number) => {
         dispatch(removeItem(id));
         dispatch(incrementStock({ id, quantity }));
 
@@ -81,14 +82,14 @@ export const StorePage: React.FC = () => {
         }
     };
 
-    const handleIncreaseQuantity = (id: string) => {
+    const handleIncreaseQuantity = (id: number) => {
         const productCart = products.find(item => item.id === id)!;
         if (productCart.quantity < 1) return;
         dispatch(increaseQuantity(id));
         dispatch(decrementStock({ id, quantity: 1 }));
     };
 
-    const handleDecreaseQuantity = (id: string) => {
+    const handleDecreaseQuantity = (id: number) => {
         const productCart = cartProducts.find(item => item.id === id)!;
         if (productCart.quantity < 2) return;
         dispatch(decreaseQuantity(id));
@@ -97,7 +98,7 @@ export const StorePage: React.FC = () => {
 
 
     const handlePurchase = async (): Promise<void> => {
-        
+
         handleCartClose();
         // Mostrar la alerta de confirmación de compra
         const result = await Swal.fire({
@@ -159,13 +160,35 @@ export const StorePage: React.FC = () => {
     };
 
     // Ejemplo de una función de simulación para el endpoint
-    const fakeEndpointCompra = (): Promise<void> => {
-        return new Promise((resolve) => {
-            setTimeout(resolve, 2000); // Simula un retraso de 2 segundos
-        });
+    const fakeEndpointCompra = async (): Promise<void> => {
+        const saleData = {
+            user_id: 1, // Aquí deberías obtener el ID del usuario autenticado
+            products: cartProducts.map(item => ({
+                product_id: item.id,
+                quantity: item.quantity
+            }))
+        };
+        try {
+            const data = await insertSale(saleData);
+
+            if (!data) {
+                throw new Error('Error al confirmar la compra');
+            }
+           
+        } catch (error) {
+            
+        } finally {
+            
+        }
     };
 
     /////////////////////////////
+    useEffect(() => {
+        // Restablecer a la página 1 si cambia el contenido de paginatedProducts
+        if (paginatedProducts.length < 9) {
+            setCurrentPage(1);
+        }
+    }, [paginatedProducts]);
 
     return (
         <>
