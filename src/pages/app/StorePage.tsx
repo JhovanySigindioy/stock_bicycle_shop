@@ -1,5 +1,6 @@
 // Importaciones necesarias
 import React, { ChangeEvent, useMemo, useState } from "react";
+import Swal from "sweetalert2";
 import { Badge, Box, Fab, Grid2 } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,11 +23,25 @@ export const StorePage: React.FC = () => {
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>): void => {
         setInputBrowser(e.target.value);
     };
-    
-    const handleCartOpen = () => setCartOpen(true);
+
+    //apertura y cierre de modales
+
+    const handleCartOpen = async () => {
+        if (cartProducts.length < 1) {
+            Swal.fire({
+                title: "Carrito de compras",
+                text: "El carrito esta vacío",
+                showCloseButton: true, // Muestra el botón de cerrar
+                showConfirmButton: false, // Oculta el botón de confirmación
+            })
+            return;
+        }
+        setCartOpen(true);
+    }
     const handleCartClose = () => setCartOpen(false);
 
-// Funciones para paginacion
+
+    // Funciones para paginacion
     const normalizedInput = inputBrowser.toLowerCase();
 
     const filteredProducts = useMemo(() => {
@@ -59,6 +74,11 @@ export const StorePage: React.FC = () => {
     const handleRemoveFromCart = (id: string, quantity: number) => {
         dispatch(removeItem(id));
         dispatch(incrementStock({ id, quantity }));
+
+        if (cartProducts.length <= 1) {
+            dispatch(clearCart());
+            handleCartClose();
+        }
     };
 
     const handleIncreaseQuantity = (id: string) => {
@@ -75,11 +95,77 @@ export const StorePage: React.FC = () => {
         dispatch(incrementStock({ id, quantity: 1 }));
     };
 
-    const handlePurchase = () => {
-        alert("Compra realizada con éxito");
-        dispatch(clearCart());
+
+    const handlePurchase = async (): Promise<void> => {
+        
+        handleCartClose();
+        // Mostrar la alerta de confirmación de compra
+        const result = await Swal.fire({
+            title: "Confirmación de Compra",
+            text: "¿Está seguro de que desea realizar la compra?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Confirmar",
+            cancelButtonText: "Cancelar",
+            reverseButtons: true,
+        });
+
+        if (result.isConfirmed) {
+            // Mostrar una alerta de "Procesando..."
+            Swal.fire({
+                title: "Procesando compra...",
+                text: "Por favor, espere.",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading(null); // Muestra el ícono de carga
+                }
+            });
+
+            try {
+                // Aquí llamas a tu endpoint para procesar la compra
+                // Esperamos que se complete antes de continuar
+                await fakeEndpointCompra();  // Reemplaza con tu función de llamada al endpoint
+                dispatch(clearCart());
+                // Cerrar la alerta de carga y mostrar el éxito
+                Swal.close(); // Cierra la alerta de "Procesando..."
+                await Swal.fire(
+                    "¡Compra realizada!",
+                    "Su compra ha sido procesada con éxito.",
+                    "success"
+                );
+            } catch (error) {
+                // Cerrar la alerta de carga y mostrar un error si algo falla
+                Swal.close();
+                await Swal.fire(
+                    "Error",
+                    "Ocurrió un problema al procesar la compra. Por favor, intente de nuevo.",
+                    "error"
+                );
+            }
+        } else if (result.isDismissed) {
+            // Si el usuario cancela, mostrar una alerta de cancelación
+            dispatch(clearCart());
+            await Swal.fire(
+                "Operación cancelada",
+                "La compra fue cancelada.",
+                "info"
+            );
+
+        }
     };
-    // FIN Funciones para manejar el carrito
+
+    // Ejemplo de una función de simulación para el endpoint
+    const fakeEndpointCompra = (): Promise<void> => {
+        return new Promise((resolve) => {
+            setTimeout(resolve, 2000); // Simula un retraso de 2 segundos
+        });
+    };
+
+    /////////////////////////////
 
     return (
         <>
@@ -133,4 +219,5 @@ export const StorePage: React.FC = () => {
             </ModalLayout>
         </>
     );
+
 };

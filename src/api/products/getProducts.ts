@@ -193,7 +193,7 @@ export const getProducts = async (): Promise<InApiResponse> => {
     try {
 
         //const response = await axios.get("https://apimocha.com/sigindioy/products");
-        const response = await axios.get("https://run.mocky.io/v3/a11ad7ec-0c3d-4582-86b5-9673b803d801");
+        const response = await axios.get("http://localhost:3000/api/v1/products");
 
         return response.data;
         //return res;
