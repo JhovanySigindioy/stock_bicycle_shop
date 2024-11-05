@@ -10,3 +10,4 @@ export * from "./InProduct";
 export * from "./InApiResponse";
 export * from "./InLoadingState";
 export * from "./InModalLayoutProps";
+export * from "./customTable";
