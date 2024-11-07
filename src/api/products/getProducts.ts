@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { InApiResponse } from "../../interface";
 
 
@@ -188,15 +188,30 @@ import { InApiResponse } from "../../interface";
 //     ]
 // }
 
+
 const urlEndPoint: string = 'http://localhost:3000/api/v1/';
 
+// Función para obtener los productos
 export const getProducts = async (): Promise<InApiResponse> => {
     try {
-        const response = await axios.get(`${urlEndPoint}products`);
-        return response.data;
-    } catch (error) {
-        console.error("Error al obtener los productos: ", error);
-        throw error;
+        const res = await axios.get(`${urlEndPoint}products`);
+        return res.data; // Devolvemos los datos recibidos
+
+    } catch (error: unknown) {
+        let errorMessage = "";
+        if (isAxiosError(error)) {
+            // Error específico de axios (por ejemplo, red, o código de status no esperado)
+            errorMessage = error.response?.data || error.message;
+            console.error('Error en la solicitud de Axios:', error.response?.data || error.message);
+        } else {
+            errorMessage = String(error);
+            console.error('Error desconocido', error);
+        }
+
+        return {
+            data: null,
+            error: errorMessage,
+        }; // Devolver null en caso de error, o puedes optar por lanzar el error si prefieres que falle
     }
 };
 

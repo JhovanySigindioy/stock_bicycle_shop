@@ -3,7 +3,7 @@ import { InApiResponse } from "../../interface";
 
 const urlEndPoint: string = 'http://localhost:3000/api/v1/';
 // Nueva función para insertar una venta
-export const insertSale = async (saleData: { user_id: number; products: { product_id: number; quantity: number }[] }): Promise<InApiResponse> => {
+export const insertSale = async (saleData: { user_id: number; products: { product_id: number | string; quantity: number }[] }): Promise<InApiResponse> => {
     try {
         const res = await axios.post(`${urlEndPoint}sales`, saleData, {
             headers: {

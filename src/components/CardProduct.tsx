@@ -4,7 +4,7 @@ import React from "react";
 import { InProduct } from "../interface";
 import { formatPrice } from "../helpers";
 
-export const CardProduct: React.FC<{ product: InProduct; handleAddToCart: (id: number) => void; }> = ({ product, handleAddToCart }) => {
+export const CardProduct: React.FC<{ product: InProduct; handleAddToCart: (id: number | string) => void; }> = ({ product, handleAddToCart }) => {
 
     const handleClick = () => {
         if (product.quantity > 0) {
@@ -90,6 +90,7 @@ export const CardProduct: React.FC<{ product: InProduct; handleAddToCart: (id: n
 
                     sx={{
                         width: { xs: 130, md: 140, lg: 145 },
+                        height: 90,
                         objectFit: "contain",
                         border: "2px solid #f5f5f4",
                         borderRadius: 1

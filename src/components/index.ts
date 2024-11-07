@@ -8,3 +8,4 @@ export * from "./Pagintation";
 export * from "./ModalLayout";
 export * from "./ShoppingCard";
 export * from "./CustomTable";
+export * from "./FormProduct";

@@ -21,16 +21,16 @@ export const sliceCartState = createSlice({
                 state.cartProducts.push({ ...action.payload, quantity: 1 });
             }
         },
-        removeItem: (state, action: PayloadAction<number>) => {
+        removeItem: (state, action: PayloadAction<number | string>) => {
             state.cartProducts = state.cartProducts.filter(item => item.id !== action.payload);
         },
-        increaseQuantity: (state, action: PayloadAction<number>) => {
+        increaseQuantity: (state, action: PayloadAction<number | string>) => {
             const item = state.cartProducts.find(item => item.id === action.payload);
             if (item) {
                 item.quantity++;
             }
         },
-        decreaseQuantity: (state, action: PayloadAction<number>) => {
+        decreaseQuantity: (state, action: PayloadAction<number | string>) => {
             const item = state.cartProducts.find(item => item.id === action.payload);
             if (item) {
                 item.quantity--;

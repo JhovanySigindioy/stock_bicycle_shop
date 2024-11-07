@@ -18,7 +18,6 @@ export const StorePage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const { products } = useSelector((state: RootState) => state.products);
     const { cartProducts } = useSelector((state: RootState) => state.cart);
-    const { isLoading } = useSelector((state: RootState) => state.loading);
     const dispatch = useDispatch();
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -72,7 +71,7 @@ export const StorePage: React.FC = () => {
         }
     };
 
-    const handleRemoveFromCart = (id: number, quantity: number) => {
+    const handleRemoveFromCart = (id: number | string, quantity: number) => {
         dispatch(removeItem(id));
         dispatch(incrementStock({ id, quantity }));
 
@@ -82,14 +81,14 @@ export const StorePage: React.FC = () => {
         }
     };
 
-    const handleIncreaseQuantity = (id: number) => {
+    const handleIncreaseQuantity = (id: number | string) => {
         const productCart = products.find(item => item.id === id)!;
         if (productCart.quantity < 1) return;
         dispatch(increaseQuantity(id));
         dispatch(decrementStock({ id, quantity: 1 }));
     };
 
-    const handleDecreaseQuantity = (id: number) => {
+    const handleDecreaseQuantity = (id: number | string) => {
         const productCart = cartProducts.find(item => item.id === id)!;
         if (productCart.quantity < 2) return;
         dispatch(decreaseQuantity(id));
@@ -148,8 +147,13 @@ export const StorePage: React.FC = () => {
                 );
             }
         } else if (result.isDismissed) {
-            // Si el usuario cancela, mostrar una alerta de cancelación
+            cartProducts.map((product) => {
+                const id = product.id;
+                const quantity = product.quantity;
+                dispatch(incrementStock({ id, quantity }));
+            })
             dispatch(clearCart());
+            console.log("se suponeuq termino de limpiar el carro");
             await Swal.fire(
                 "Operación cancelada",
                 "La compra fue cancelada.",
@@ -174,11 +178,11 @@ export const StorePage: React.FC = () => {
             if (!data) {
                 throw new Error('Error al confirmar la compra');
             }
-           
+
         } catch (error) {
-            
+
         } finally {
-            
+
         }
     };
 
@@ -194,9 +198,9 @@ export const StorePage: React.FC = () => {
         <>
             <InputBrowser textValue={inputBrowser} handleOnChange={handleOnChange} />
             <Grid2 container display={"flex"} gap={1.5} marginBottom={3}>
-                {isLoading ? (
-                    <SpinnerLoading />
-                ) : (
+
+
+                {
                     paginatedProducts.map((product) => (
                         <CardProduct
                             key={product.id}
@@ -204,7 +208,8 @@ export const StorePage: React.FC = () => {
                             handleAddToCart={() => handleAddToCart(product)}
                         />
                     ))
-                )}
+                }
+
             </Grid2>
             <Pagination
                 currentPage={currentPage}

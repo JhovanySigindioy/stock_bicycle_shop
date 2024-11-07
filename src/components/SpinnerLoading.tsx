@@ -6,7 +6,9 @@ export const SpinnerLoading: React.FC = () => {
         <Stack
             display="flex"
             width="100%"
+             height="calc(100vh - 60px)"
             flexDirection="column"
+            justifyContent="center"
             alignItems="center"
             gap={1}
         >

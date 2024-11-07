@@ -18,7 +18,7 @@ export const CustomTable: React.FC<CustomTableProps> = ({ columns, rows, actions
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.id} sx={{ '&:hover': { backgroundColor: '#f1f1f1' } }}>
+            <TableRow key={row.id} sx={{ '&:hover': { backgroundColor: '#f1f1f1' }}}>
               {columns.map((column) => (
                 <TableCell key={column.field}>{row[column.field]}</TableCell>
               ))}
