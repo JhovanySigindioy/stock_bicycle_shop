@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Swal from "sweetalert2";
 import { useDispatch, useSelector } from 'react-redux';
 import {
     TextField,
@@ -16,7 +17,11 @@ import { InProduct, InSendProductDB } from '../interface';
 import { createProduct } from '../api/products';
 import { setProductState } from '../store/slice';
 
-export const FormProduct: React.FC = () => {
+export interface InFormCreateProductProps {
+    modaFormClose: () => void;
+}
+
+export const FormProduct: React.FC<InFormCreateProductProps> = ({ modaFormClose }) => {
     const dispatch = useDispatch<AppDispatch>();
 
     const [product, setProduct] = useState({
@@ -33,72 +38,107 @@ export const FormProduct: React.FC = () => {
         location: '',
     });
 
-    const categories = useSelector((state: RootState) => state.dataSelectors.categories);
-    const brands = useSelector((state: RootState) => state.dataSelectors.brands);
-    const locations = useSelector((state: RootState) => state.dataSelectors.locations);
-
+    const { categories, brands, locations } = useSelector((state: RootState) => state.dataSelectors);
 
     const handleChange = (
-        event: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }> | SelectChangeEvent<string>
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
     ) => {
         const { name, value } = event.target;
 
-        // Si el input es un campo tipo file
         if (name === 'img_product' && (event.target as HTMLInputElement).files) {
-            const file = (event.target as HTMLInputElement).files![0]; // Accedemos al primer archivo
-            setProduct({ ...product, [name]: file });
+            const file = (event.target as HTMLInputElement).files![0];
+            setProduct(prev => ({ ...prev, [name]: file }));
+        } else {
+            setProduct(prev => ({ ...prev, [name]: value }));
         }
-        // Para SelectChangeEvent, que no tiene la propiedad files
-        else if ('value' in event.target) {
-            setProduct({ ...product, [name as string]: value });
-        }
-
     };
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent):Promise<void> => {
         event.preventDefault();
-        uploadImageFirebase(product.img_product!).then((urlImgNewProduct) => {
-            const newProduct: InSendProductDB = {
-                barcode: product.barcode,
-                name: product.name,
-                description: product.description,
-                img_product: urlImgNewProduct,
-                cost: Number(product.cost),
-                sale_price: Number(product.sale_price),
-                quantity: Number(product.quantity),
-                brand_id: Number(product.brand),
-                category_id: Number(product.category),
-                location_id: Number(product.location)
-            }
+        modaFormClose();
 
-            createProduct(newProduct).then((newProductCreated) => {
+        const result = await Swal.fire({
+            title: "Confirmación",
+            text: "¿Está seguro de que desea crear el nuevo producto?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Confirmar",
+            cancelButtonText: "Cancelar",
+            reverseButtons: true,
+        });
+
+        if (result.isConfirmed) {
+            // Mostrar una alerta de "Procesando..."
+            Swal.fire({
+                title: "Procesando...",
+                text: "Por favor, espere.",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading(null); // Muestra el ícono de carga
+                }
+            });
+
+            try {
+                // Subir la imagen a Firebase
+                const urlImgNewProduct = await uploadImageFirebase(product.img_product!);
+
+                // Crear el objeto del nuevo producto
+                const newProduct: InSendProductDB = {
+                    barcode: product.barcode,
+                    name: product.name,
+                    description: product.description,
+                    img_product: urlImgNewProduct,
+                    cost: Number(product.cost),
+                    sale_price: Number(product.sale_price),
+                    quantity: Number(product.quantity),
+                    brand_id: Number(product.brand),
+                    category_id: Number(product.category),
+                    location_id: Number(product.location),
+                };
+
+                // Crear el producto en la base de datos
+                const newProductCreated = await createProduct(newProduct);
 
                 if (newProductCreated.data) {
-                    const brand = brands.find((brand) => brand.id === newProductCreated.data![0].brand_id);
-                    const categorie = categories.find((categorie) => categorie.id === newProductCreated.data![0].category_id);
-                    const location = locations.find((location) => location.id === newProductCreated.data![0].location_id);
-
+                    const createdData = newProductCreated.data[0];
                     const producToRedux: InProduct = {
-                        id: newProductCreated.data![0].id || 100000,
-                        barcode: newProductCreated.data![0].barcode,
-                        name: newProductCreated.data![0].name,
-                        description: newProductCreated.data![0].description,
-                        img_product: newProductCreated.data![0].img_product,
-                        cost: newProductCreated.data![0].cost,
-                        sale_price: newProductCreated.data![0].sale_price,
-                        quantity: newProductCreated.data![0].quantity,
-                        brand: brand!.name,
-                        category: categorie!.name,
-                        location: location!.name,
-                    }
+                        ...createdData,
+                        brand: brands.find(brand => brand.id === createdData.brand_id)?.name || '',
+                        category: categories.find(categorie => categorie.id === createdData.category_id)?.name || '',
+                        location: locations.find(location => location.id === createdData.location_id)?.name || '',
+                    };
 
+                    // Actualizar el estado global con el nuevo producto
                     dispatch(setProductState(producToRedux));
                 }
 
-
-            }).catch((e) => console.error("Error :", e));
-        })
-
+                // Cerrar la alerta de carga y mostrar el éxito
+                Swal.close(); // Cierra la alerta de "Procesando..."
+                await Swal.fire(
+                    "¡Producto creado!",
+                    "Nuevo producto ha sido creado con éxito.",
+                    "success"
+                );
+            } catch (error) {
+                // Cerrar la alerta de carga y mostrar un error si algo falla
+                Swal.close();
+                await Swal.fire(
+                    "Error",
+                    "Ocurrió un problema al procesar la creacion del nuevo producto. Por favor, intente de nuevo.",
+                    "error"
+                );
+            }
+        } else if (result.isDismissed) {
+            await Swal.fire(
+                "Operación cancelada",
+                "La creacion del nuevo producto fue cancelada.",
+                "info"
+            );
+        }
     };
 
     return (
@@ -162,7 +202,6 @@ export const FormProduct: React.FC = () => {
                     </FormControl>
                 </Grid>
 
-                {/* Dividimos en dos columnas */}
                 <Grid item xs={6} container spacing={2}>
                     <Grid item xs={12}>
                         <TextField
@@ -256,7 +295,6 @@ export const FormProduct: React.FC = () => {
                     </Grid>
                 </Grid>
             </Grid>
-
             <Button type="submit" variant="contained" color="primary" style={{ marginTop: '20px' }}>
                 Guardar Producto
             </Button>

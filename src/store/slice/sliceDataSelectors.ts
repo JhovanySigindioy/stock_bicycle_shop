@@ -1,15 +1,23 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { InDataSelectors } from "../../interface";
 import { fetchDataSelectors } from "../thunks";
 
-export interface SelectorsState {
+export interface InSelectorsState {
     categories: InDataSelectors[];
     brands: InDataSelectors[];
     locations: InDataSelectors[];
     error: string | null;
 }
 
-const initialState: SelectorsState = {
+export type typeSelector = "brands" | "categories" | "locations";
+
+export interface InSetSelectorState {
+    id: number | string;
+    name: string;
+    selectorType: typeSelector
+}
+
+const initialState: InSelectorsState = {
     categories: [],
     brands: [],
     locations: [],
@@ -19,10 +27,26 @@ const initialState: SelectorsState = {
 export const sliceDataSelectors = createSlice({
     name: "selectors",
     initialState,
-    reducers: {},
+    reducers: {
+        setSelectorsState: (
+            state,
+            action: PayloadAction<InSetSelectorState>
+        ) => {
+            const newItemSelector = {
+                id: action.payload.id,
+                name: action.payload.name,
+            };
+
+            // Evitar elementos duplicados por ID
+            const selectorArray = state[action.payload.selectorType];
+            if (!selectorArray.some(item => item.id === newItemSelector.id)) {
+                selectorArray.push(newItemSelector);
+            }
+        },
+    },
     extraReducers: (builder) => {
         builder.addCase(fetchDataSelectors.fulfilled, (state, action) => {
-            const selectorName = action.meta.arg as keyof SelectorsState;
+            const selectorName = action.meta.arg as keyof InSelectorsState;
             if (selectorName in state) {
                 (state[selectorName] as InDataSelectors[]) = action.payload;
             }
@@ -34,3 +58,4 @@ export const sliceDataSelectors = createSlice({
     },
 });
 
+export const { setSelectorsState } = sliceDataSelectors.actions;

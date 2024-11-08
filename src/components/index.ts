@@ -9,3 +9,4 @@ export * from "./ModalLayout";
 export * from "./ShoppingCard";
 export * from "./CustomTable";
 export * from "./FormProduct";
+export * from "./FormCreateSelector";

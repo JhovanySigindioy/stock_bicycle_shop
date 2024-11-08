@@ -3,11 +3,11 @@ import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 import { CloseOutlined } from "@mui/icons-material";
 import { ModalLayoutProps } from "../interface";
 
-export const ModalLayout: React.FC<ModalLayoutProps> = ({ title, cartOpen, handleCartClose, children }) => {
+export const ModalLayout: React.FC<ModalLayoutProps> = ({ title, modalOpen, handleModalClose, children }) => {
     return (
-        <Dialog open={cartOpen} onClose={handleCartClose} fullWidth sx={{ margin: 0, padding: 0 }}>
+        <Dialog open={modalOpen} onClose={handleModalClose} fullWidth sx={{ margin: 0, padding: 0 }}>
             <IconButton
-                onClick={handleCartClose}
+                onClick={handleModalClose}
                 sx={{
                     position: "absolute",
                     top: 0,

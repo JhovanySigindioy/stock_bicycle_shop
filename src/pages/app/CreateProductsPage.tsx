@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { InActions, InColumns, InRows } from "../../interface";
-import { CustomTable, FormProduct, ModalLayout } from "../../components/";
+import { CustomTable, FormProduct, ModalLayout, FormCreateSelector } from "../../components/";
 import { Box, Button, Typography, useMediaQuery } from "@mui/material";
 import { SelectAction } from "../../components/SelectAction";
 
@@ -33,12 +33,19 @@ const actions: InActions[] = [
     },
 ];
 
+export type formOpenType = "products" | "brands" | "categories" | "locations";
 
 export const CreateProductsPage: React.FC = () => {
 
-    const [cartOpen, setCartOpen] = useState(false);
-    const handleCartOpen = (): void => setCartOpen(true);
-    const handleCartClose = (): void => setCartOpen(false);
+    const [formOpen, setFormOpen] = useState(false);
+    const [typeFormOpen, setTypeFormOpen] = useState<formOpenType>("products");
+
+    const handleFormOpen = (type: formOpenType): void => {
+        setTypeFormOpen(type);
+        setFormOpen(true);
+    };
+
+    const handleFormClose = (): void => setFormOpen(false);
 
     const isSmallScreen = useMediaQuery((theme: any) => theme.breakpoints.down('md'));
 
@@ -58,7 +65,7 @@ export const CreateProductsPage: React.FC = () => {
                 </Box>
                 <Box width={isSmallScreen ? '100%' : '25%'} order={isSmallScreen ? 1 : 2}>
                     {isSmallScreen ? (
-                        <SelectAction handleOpenForm={handleCartOpen}/>
+                        <SelectAction handleOpenForm={() => handleFormOpen("products")} />
                     ) : (
                         <Box sx={{ textAlign: "center", padding: 2 }}>
                             <Typography variant="h5" mb={2}>Acciones</Typography>
@@ -74,7 +81,7 @@ export const CreateProductsPage: React.FC = () => {
                                     variant="contained"
                                     fullWidth
                                     color="primary"
-                                    onClick={() => handleCartOpen()}
+                                    onClick={() => handleFormOpen("products")}
                                 >
                                     Crear Producto
                                 </Button>
@@ -83,7 +90,7 @@ export const CreateProductsPage: React.FC = () => {
                                     variant="contained"
                                     fullWidth
                                     color="primary"
-                                    onClick={() => console.log('Crear Categoría')}
+                                    onClick={() => handleFormOpen("categories")}
                                 >
                                     Crear Categoría
                                 </Button>
@@ -92,7 +99,7 @@ export const CreateProductsPage: React.FC = () => {
                                     variant="contained"
                                     fullWidth
                                     color="primary"
-                                    onClick={() => console.log('Crear Marca')}
+                                    onClick={() => handleFormOpen("brands")}
                                 >
                                     Crear Marca
                                 </Button>
@@ -101,7 +108,7 @@ export const CreateProductsPage: React.FC = () => {
                                     variant="contained"
                                     fullWidth
                                     color="primary"
-                                    onClick={() => console.log('Crear Ubicación')}
+                                    onClick={() => handleFormOpen("locations")}
                                 >
                                     Crear Ubicación
                                 </Button>
@@ -110,8 +117,32 @@ export const CreateProductsPage: React.FC = () => {
                     )}
                 </Box>
             </Box>
-            <ModalLayout cartOpen={cartOpen} title="Crear Producto" handleCartClose={handleCartClose}>
-                <FormProduct />
+            <ModalLayout modalOpen={formOpen} title={`Crear ${typeFormOpen.charAt(0).toUpperCase() + typeFormOpen.slice(1)}`} handleModalClose={handleFormClose}>
+                {typeFormOpen === "products" && <FormProduct modaFormClose={handleFormClose} />}
+                {typeFormOpen === "categories" && (
+                    <FormCreateSelector
+                        label="Categoría"
+                        selectorType="categories"
+                        successMessage="Categoría creada con éxito"
+                        modaFormClose={handleFormClose}
+                    />
+                )}
+                {typeFormOpen === "brands" && (
+                    <FormCreateSelector
+                        label="Marca"
+                        selectorType="brands"
+                        successMessage="Marca creada con éxito"
+                        modaFormClose={handleFormClose}
+                    />
+                )}
+                {typeFormOpen === "locations" && (
+                    <FormCreateSelector
+                        label="Ubicación"
+                        selectorType="locations"
+                        successMessage="Ubicación creada con éxito"
+                        modaFormClose={handleFormClose}
+                    />
+                )}
             </ModalLayout>
         </>
     );

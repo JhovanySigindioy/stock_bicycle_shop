@@ -1,4 +1,5 @@
-export interface InSendProductDB {
+export interface InResProductDB {
+    id: number | string;
     barcode: string;
     name: string;
     description: string;

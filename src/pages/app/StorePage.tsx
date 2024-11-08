@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { Badge, Box, Fab, Grid2 } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useDispatch, useSelector } from "react-redux";
-import { CardProduct, InputBrowser, ModalLayout, Pagination, ShoppingCard, SpinnerLoading } from "../../components";
+import { CardProduct, InputBrowser, ModalLayout, Pagination, ShoppingCard } from "../../components";
 import { RootState } from "../../store";
 import { addItem, clearCart, decreaseQuantity, decrementStock, increaseQuantity, incrementStock, removeItem } from "../../store/slice";
 import { InProduct } from "../../interface";
@@ -153,7 +153,7 @@ export const StorePage: React.FC = () => {
                 dispatch(incrementStock({ id, quantity }));
             })
             dispatch(clearCart());
-            console.log("se suponeuq termino de limpiar el carro");
+            
             await Swal.fire(
                 "Operación cancelada",
                 "La compra fue cancelada.",
@@ -236,7 +236,7 @@ export const StorePage: React.FC = () => {
                     />
                 </Fab>
             </Box>
-            <ModalLayout title="Carrito de compras" cartOpen={cartOpen} handleCartClose={handleCartClose}>
+            <ModalLayout title="Carrito de compras" modalOpen={cartOpen} handleModalClose={handleCartClose}>
                 <ShoppingCard
                     cartProducts={cartProducts}
                     onIncrease={handleIncreaseQuantity}
