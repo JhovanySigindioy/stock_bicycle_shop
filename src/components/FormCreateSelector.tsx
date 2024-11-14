@@ -85,7 +85,7 @@ export const FormCreateSelector: React.FC<FormCreateSelectorsProps> = ({ modaFor
             </Grid>
             <Grid container justifyContent={"center"}>
                 <Button type="submit" variant="contained" color="primary" style={{ marginTop: '20px' }}>
-                    Guardar {label}
+                    Crear {label}
                 </Button>
             </Grid>
         </form>

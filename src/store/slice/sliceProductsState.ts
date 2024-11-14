@@ -16,8 +16,21 @@ export const sliceProductsState = createSlice({
     name: "productsState",
     initialState,
     reducers: {
+        updateProduct(state, action: PayloadAction<InProduct>) {
+            const updatedProduct = action.payload;
+            const index = state.products.findIndex(prod => prod.id === updatedProduct.id);
+            if (index !== -1) {
+                state.products[index] = { ...state.products[index], ...updatedProduct };
+            }
+        },
         setProductState: (state, action: PayloadAction<InProduct>) => {
             state.products.push(action.payload);
+        },
+        deleteProductState: (state, action: PayloadAction<InProduct>) => {
+            const index: number | string = state.products.findIndex(product => product.id === action.payload.id);
+            if (index !== -1) {
+                state.products.splice(index, 1);
+            }
         },
         decrementStock(state, action: PayloadAction<{ id: number | string; quantity: number }>) {
             const product = state.products.find(prod => prod.id === action.payload.id);
@@ -48,4 +61,4 @@ export const sliceProductsState = createSlice({
     },
 });
 
-export const { setProductState, decrementStock, incrementStock } = sliceProductsState.actions;
+export const { updateProduct, setProductState, decrementStock, incrementStock, deleteProductState } = sliceProductsState.actions;

@@ -20,6 +20,8 @@ export const StorePage: React.FC = () => {
     const { cartProducts } = useSelector((state: RootState) => state.cart);
     const dispatch = useDispatch();
 
+
+    console.log("Lista de productos ", products);
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>): void => {
         setInputBrowser(e.target.value);
     };
@@ -153,7 +155,7 @@ export const StorePage: React.FC = () => {
                 dispatch(incrementStock({ id, quantity }));
             })
             dispatch(clearCart());
-            
+
             await Swal.fire(
                 "Operación cancelada",
                 "La compra fue cancelada.",
@@ -188,11 +190,11 @@ export const StorePage: React.FC = () => {
 
     /////////////////////////////
     useEffect(() => {
-        // Restablecer a la página 1 si cambia el contenido de paginatedProducts
-        if (paginatedProducts.length < 9) {
-            setCurrentPage(1);
+        // Si la página actual está fuera del rango, restablece la última página válida.
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
         }
-    }, [paginatedProducts]);
+    }, [paginatedProducts, currentPage, totalPages]);
 
     return (
         <>

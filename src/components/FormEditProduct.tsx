@@ -10,56 +10,57 @@ import {
     InputLabel,
     Grid,
     SelectChangeEvent,
+    CardMedia,
 } from '@mui/material';
 import { AppDispatch, RootState } from '../store';
 import { uploadImageFirebase } from '../api/firebase';
 import { InProduct, InSendProductDB } from '../interface';
-import { createProduct } from '../api/products';
-import { setProductState } from '../store/slice';
+import { patchProduct } from '../api/products';
+import { updateProduct } from '../store/slice';
 
-export interface InFormCreateProductProps {
+export interface InFormEditProductProps {
+    productSel: InProduct;
     modaFormClose: () => void;
 }
 
-export const FormProduct: React.FC<InFormCreateProductProps> = ({ modaFormClose }) => {
+export const FormEditProduct: React.FC<InFormEditProductProps> = ({ modaFormClose, productSel }) => {
     const dispatch = useDispatch<AppDispatch>();
-
-    const [product, setProduct] = useState({
-        id: '',
-        barcode: '',
-        name: '',
-        description: '',
-        img_product: null as File | null,
-        cost: '',
-        sale_price: '',
-        quantity: '',
-        brand: '',
-        category: '',
-        location: '',
-    });
-
     const { categories, brands, locations } = useSelector((state: RootState) => state.dataSelectors);
 
+    const [product, setProduct] = useState({
+        id: productSel.id,
+        barcode: productSel.barcode,
+        name: productSel.name,
+        description: productSel.description,
+        cost: productSel.cost,
+        sale_price: productSel.sale_price,
+        quantity: productSel.quantity,
+        active: productSel.active,
+        brand: String(brands.find((brand) => productSel.brand === brand.name)?.id),
+        category: String(categories.find((categorie) => productSel.category === categorie.name)?.id),
+        location: String(locations.find((location) => productSel.location === location.name)?.id),
+        img_product: productSel.img_product,
+        new_img_product: null as File | null,
+    });
     const handleChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
     ) => {
         const { name, value } = event.target;
 
-        if (name === 'img_product' && (event.target as HTMLInputElement).files) {
+        if (name === 'new_img_product' && (event.target as HTMLInputElement).files) {
             const file = (event.target as HTMLInputElement).files![0];
             setProduct(prev => ({ ...prev, [name]: file }));
         } else {
             setProduct(prev => ({ ...prev, [name]: value }));
         }
     };
-
     const handleSubmit = async (event: React.FormEvent): Promise<void> => {
         event.preventDefault();
         modaFormClose();
 
         const result = await Swal.fire({
             title: "Confirmación",
-            text: "¿Está seguro de que desea crear el nuevo producto?",
+            text: "¿Está seguro de que desea actualizar el producto?",
             icon: "question",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -68,9 +69,7 @@ export const FormProduct: React.FC<InFormCreateProductProps> = ({ modaFormClose 
             cancelButtonText: "Cancelar",
             reverseButtons: true,
         });
-
         if (result.isConfirmed) {
-            // Mostrar una alerta de "Procesando..."
             Swal.fire({
                 title: "Procesando...",
                 text: "Por favor, espere.",
@@ -78,20 +77,21 @@ export const FormProduct: React.FC<InFormCreateProductProps> = ({ modaFormClose 
                 allowEscapeKey: false,
                 showConfirmButton: false,
                 didOpen: () => {
-                    Swal.showLoading(null); // Muestra el ícono de carga
+                    Swal.showLoading(null);
                 }
             });
-
             try {
-                // Subir la imagen a Firebase
-                const urlImgNewProduct = await uploadImageFirebase(product.img_product!);
+                let urlImgNewProduct: string = "";
 
-                // Crear el objeto del nuevo producto
+                if (product.new_img_product !== null) {
+                    urlImgNewProduct = await uploadImageFirebase(product.new_img_product);
+                }
+
                 const newProduct: InSendProductDB = {
-                    barcode: product.barcode,
+                    barcode: product.barcode || '',
                     name: product.name,
-                    description: product.description,
-                    img_product: urlImgNewProduct,
+                    description: product.description || '',
+                    img_product: urlImgNewProduct !== "" ? urlImgNewProduct : product.img_product!,
                     cost: Number(product.cost),
                     sale_price: Number(product.sale_price),
                     quantity: Number(product.quantity),
@@ -99,12 +99,11 @@ export const FormProduct: React.FC<InFormCreateProductProps> = ({ modaFormClose 
                     category_id: Number(product.category),
                     location_id: Number(product.location),
                 };
-
-                // Crear el producto en la base de datos
-                const newProductCreated = await createProduct(newProduct);
-
-                if (newProductCreated.data) {
-                    const createdData = newProductCreated.data[0];
+                
+                const poductUpdated = await patchProduct(newProduct, product.id);
+                // Aqui debemos acambiar a logica de edicion de producto NO creacion
+                if (poductUpdated.data) {
+                    const createdData = poductUpdated.data[0];
                     const producToRedux: InProduct = {
                         ...createdData,
                         brand: brands.find(brand => brand.id === createdData.brand_id)?.name || '',
@@ -112,30 +111,26 @@ export const FormProduct: React.FC<InFormCreateProductProps> = ({ modaFormClose 
                         location: locations.find(location => location.id === createdData.location_id)?.name || '',
                     };
 
-                    // Actualizar el estado global con el nuevo producto
-                    dispatch(setProductState(producToRedux));
+                    dispatch(updateProduct(producToRedux));
                 }
-
-                // Cerrar la alerta de carga y mostrar el éxito
-                Swal.close(); // Cierra la alerta de "Procesando..."
+                Swal.close();
                 await Swal.fire(
-                    "¡Producto creado!",
-                    "Nuevo producto ha sido creado con éxito.",
+                    "¡Producto actualizado!",
+                    "Nuevo producto ha sido actualizado con éxito.",
                     "success"
                 );
             } catch (error) {
-                // Cerrar la alerta de carga y mostrar un error si algo falla
                 Swal.close();
                 await Swal.fire(
                     "Error",
-                    "Ocurrió un problema al procesar la creacion del nuevo producto. Por favor, intente de nuevo.",
+                    "Ocurrió un problema al actualizar el producto. Por favor, intente de nuevo.",
                     "error"
                 );
             }
         } else if (result.isDismissed) {
             await Swal.fire(
                 "Operación cancelada",
-                "La creacion del nuevo producto fue cancelada.",
+                "La actualización del nuevo producto fue cancelada.",
                 "info"
             );
         }
@@ -174,34 +169,6 @@ export const FormProduct: React.FC<InFormCreateProductProps> = ({ modaFormClose 
                         placeholder="Opcional"
                     />
                 </Grid>
-                <Grid item xs={12}>
-                    <FormControl fullWidth variant="outlined" sx={{ position: 'relative' }}>
-                        <InputLabel
-                            shrink
-                            sx={{
-                                position: 'absolute',
-                                left: '12px',
-                                backgroundColor: 'white',
-                                padding: '0 4px',
-                                color: 'rgba(0, 0, 0, 0.6)',
-                                fontSize: '0.8rem',
-                                transform: 'translateY(-50%)',
-                                pointerEvents: 'none',
-                            }}
-                        >
-                            Imagen del producto
-                        </InputLabel>
-                        <TextField
-                            type="file"
-                            name="img_product"
-                            onChange={handleChange}
-                            inputProps={{
-                                style: { paddingTop: '15px' },
-                            }}
-                        />
-                    </FormControl>
-                </Grid>
-
                 <Grid item xs={6} container spacing={2}>
                     <Grid item xs={12}>
                         <TextField
@@ -237,7 +204,6 @@ export const FormProduct: React.FC<InFormCreateProductProps> = ({ modaFormClose 
                         />
                     </Grid>
                 </Grid>
-
                 <Grid item xs={6} container spacing={2}>
                     <Grid item xs={12}>
                         <FormControl fullWidth required>
@@ -294,6 +260,63 @@ export const FormProduct: React.FC<InFormCreateProductProps> = ({ modaFormClose 
                         </FormControl>
                     </Grid>
                 </Grid>
+            </Grid>
+            <Grid item xs={12} marginY={3}>
+                <FormControl fullWidth variant="outlined" sx={{ position: 'relative' }}>
+                    <InputLabel
+                        shrink
+                        sx={{
+                            position: 'absolute',
+                            left: '12px',
+                            backgroundColor: 'white',
+                            padding: '0 4px',
+                            color: 'rgba(0, 0, 0, 0.6)',
+                            fontSize: '0.8rem',
+                            transform: 'translateY(-50%)',
+                            pointerEvents: 'none',
+                        }}
+                    >
+                        Imagen del producto
+                    </InputLabel>
+                    <CardMedia
+                        component={"img"}
+                        image={productSel.img_product!}
+                        sx={{
+                            padding: 1,
+                            height: 250,
+                            objectFit: "contain",
+                            border: "2px solid #dddcdc",
+                            borderRadius: 1
+                        }}>
+                    </CardMedia>
+                </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+                <FormControl fullWidth variant="outlined" sx={{ position: 'relative' }}>
+                    <InputLabel
+                        shrink
+                        sx={{
+                            position: 'absolute',
+                            left: '12px',
+                            backgroundColor: 'white',
+                            padding: '0 4px',
+                            color: 'rgba(0, 0, 0, 0.6)',
+                            fontSize: '0.8rem',
+                            transform: 'translateY(-50%)',
+                            pointerEvents: 'none',
+                        }}
+                    >
+                        Nueva imagen producto
+                    </InputLabel>
+                    <TextField
+                        type="file"
+                        name="new_img_product"
+                        onChange={handleChange}
+                        inputProps={{
+                            style: { paddingTop: '15px' },
+                        }}
+                    />
+                </FormControl>
             </Grid>
             <Grid container justifyContent={"center"}>
                 <Button type="submit" variant="contained" color="primary" style={{ marginTop: '20px' }}>

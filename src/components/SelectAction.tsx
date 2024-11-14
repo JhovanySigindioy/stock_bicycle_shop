@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { formOpenType } from '../pages/app';
+
 export interface InSelectActionProps {
-    handleOpenForm: () => void;
+    handleOpenForm: (type: formOpenType) => void;
 }
 
-export const SelectAction: React.FC<InSelectActionProps> = ({handleOpenForm}) => {
+export const SelectAction: React.FC<InSelectActionProps> = ({ handleOpenForm }) => {
     const [selectedAction, setSelectedAction] = useState<string>("");
 
     const handleActionSelect = (event: SelectChangeEvent<string>) => {
@@ -13,31 +15,29 @@ export const SelectAction: React.FC<InSelectActionProps> = ({handleOpenForm}) =>
 
         switch (action) {
             case 'createProduct':
-                handleOpenForm();
-                // Aquí debe resetearse
-                setSelectedAction(''); // Reiniciar el Select
+                handleOpenForm("products"); // Llamamos a handleOpenForm con el tipo "products"
                 break;
             case 'createCategory':
-                console.log('Crear Categoría');
-                setSelectedAction(''); // Reiniciar el Select
+                handleOpenForm("categories"); // Llamamos a handleOpenForm con el tipo "categories"
                 break;
             case 'createBrand':
-                console.log('Crear Marca');
-                setSelectedAction(''); // Reiniciar el Select
+                handleOpenForm("brands"); // Llamamos a handleOpenForm con el tipo "brands"
                 break;
             case 'createLocation':
-                console.log('Crear Ubicación');
-                setSelectedAction(''); // Reiniciar el Select
+                handleOpenForm("locations"); // Llamamos a handleOpenForm con el tipo "locations"
                 break;
             default:
                 break;
         }
+
+        // Reiniciamos el valor del select después de seleccionar
+        setSelectedAction('');
     };
 
     return (
         <Select
             fullWidth
-            value={selectedAction} // Asigna el estado como valor
+            value={selectedAction}
             onChange={handleActionSelect}
             displayEmpty
             sx={{ mb: 1 }}

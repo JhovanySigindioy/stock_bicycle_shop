@@ -56,6 +56,7 @@ export const DashboardPage: React.FC = () => {
                     dispatch(hideLoading());  // Oculta el loading si hay un error
                 })
                 .finally(() => {
+                    
                     dispatch(hideLoading());  // Oculta el loading siempre
                 });
 

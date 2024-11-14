@@ -1,13 +1,14 @@
 export interface InProduct {
     id: number | string;
-    barcode: string | null;
+    barcode: string;
     name: string;
-    description: string | null;
-    img_product: string | null;
+    description: string;
+    img_product: string;
     cost: number;
     sale_price: number;
     quantity: number;
     brand: string;
     category: string;
     location: string;
+    active: boolean;
 }
