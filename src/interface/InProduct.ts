@@ -3,12 +3,12 @@ export interface InProduct {
     barcode: string;
     name: string;
     description: string;
-    img_product: string;
+    img_product: string ;
     cost: number;
     sale_price: number;
     quantity: number;
+    active: boolean;
     brand: string;
     category: string;
     location: string;
-    active: boolean;
 }

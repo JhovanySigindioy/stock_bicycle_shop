@@ -10,3 +10,4 @@ export * from "./ShoppingCard";
 export * from "./CustomTable";
 export * from "./FormProduct";
 export * from "./FormCreateSelector";
+export * from "./FormEditProduct";

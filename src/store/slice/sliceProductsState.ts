@@ -26,8 +26,8 @@ export const sliceProductsState = createSlice({
         setProductState: (state, action: PayloadAction<InProduct>) => {
             state.products.push(action.payload);
         },
-        deleteProductState: (state, action: PayloadAction<InProduct>) => {
-            const index: number | string = state.products.findIndex(product => product.id === action.payload.id);
+        deleteProductState: (state, action: PayloadAction<number | string>) => {
+            const index: number | string = state.products.findIndex(product => product.id === action.payload);
             if (index !== -1) {
                 state.products.splice(index, 1);
             }

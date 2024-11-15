@@ -20,8 +20,6 @@ export const StorePage: React.FC = () => {
     const { cartProducts } = useSelector((state: RootState) => state.cart);
     const dispatch = useDispatch();
 
-
-    console.log("Lista de productos ", products);
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>): void => {
         setInputBrowser(e.target.value);
     };

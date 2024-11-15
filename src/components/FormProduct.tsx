@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { AppDispatch, RootState } from '../store';
 import { uploadImageFirebase } from '../api/firebase';
-import { InProduct, InSendProductDB } from '../interface';
+import { InApiResProductCreated, InProduct, InSendProductDB } from '../interface';
 import { createProduct } from '../api/products';
 import { setProductState } from '../store/slice';
 
@@ -33,6 +33,7 @@ export const FormProduct: React.FC<InFormCreateProductProps> = ({ modaFormClose 
         cost: '',
         sale_price: '',
         quantity: '',
+        active: true,
         brand: '',
         category: '',
         location: '',
@@ -95,13 +96,14 @@ export const FormProduct: React.FC<InFormCreateProductProps> = ({ modaFormClose 
                     cost: Number(product.cost),
                     sale_price: Number(product.sale_price),
                     quantity: Number(product.quantity),
+                    active: product.active,
                     brand_id: Number(product.brand),
                     category_id: Number(product.category),
                     location_id: Number(product.location),
                 };
 
                 // Crear el producto en la base de datos
-                const newProductCreated = await createProduct(newProduct);
+                const newProductCreated: InApiResProductCreated = await createProduct(newProduct);
 
                 if (newProductCreated.data) {
                     const createdData = newProductCreated.data[0];

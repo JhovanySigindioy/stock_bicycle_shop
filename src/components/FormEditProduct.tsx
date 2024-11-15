@@ -14,39 +14,42 @@ import {
 } from '@mui/material';
 import { AppDispatch, RootState } from '../store';
 import { uploadImageFirebase } from '../api/firebase';
-import { InProduct, InSendProductDB } from '../interface';
+import { InPatchProduct, InProduct } from '../interface';
 import { patchProduct } from '../api/products';
 import { updateProduct } from '../store/slice';
 
 export interface InFormEditProductProps {
-    productSel: InProduct;
+    idProductSelect: number | string;
     modaFormClose: () => void;
 }
 
-export const FormEditProduct: React.FC<InFormEditProductProps> = ({ modaFormClose, productSel }) => {
+export const FormEditProduct: React.FC<InFormEditProductProps> = ({ modaFormClose, idProductSelect }) => {
     const dispatch = useDispatch<AppDispatch>();
+    const { products } = useSelector((state: RootState) => state.products);
     const { categories, brands, locations } = useSelector((state: RootState) => state.dataSelectors);
 
+    const productSelect: InProduct = products.find((product)=> product.id === idProductSelect)!;
+    //Pendiente crear una interfaz para tipar el useState
     const [product, setProduct] = useState({
-        id: productSel.id,
-        barcode: productSel.barcode,
-        name: productSel.name,
-        description: productSel.description,
-        cost: productSel.cost,
-        sale_price: productSel.sale_price,
-        quantity: productSel.quantity,
-        active: productSel.active,
-        brand: String(brands.find((brand) => productSel.brand === brand.name)?.id),
-        category: String(categories.find((categorie) => productSel.category === categorie.name)?.id),
-        location: String(locations.find((location) => productSel.location === location.name)?.id),
-        img_product: productSel.img_product,
+        id: productSelect.id,
+        barcode: productSelect.barcode,
+        name: productSelect.name,
+        description: productSelect.description,
+        cost: productSelect.cost,
+        sale_price: productSelect.sale_price,
+        quantity: productSelect.quantity,
+        active: productSelect.active,
+        brand: String(brands.find((brand) => productSelect.brand === brand.name)?.id),
+        category: String(categories.find((categorie) => productSelect.category === categorie.name)?.id),
+        location: String(locations.find((location) => productSelect.location === location.name)?.id),
+        img_product: productSelect.img_product,
         new_img_product: null as File | null,
     });
+
     const handleChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
     ) => {
         const { name, value } = event.target;
-
         if (name === 'new_img_product' && (event.target as HTMLInputElement).files) {
             const file = (event.target as HTMLInputElement).files![0];
             setProduct(prev => ({ ...prev, [name]: file }));
@@ -87,7 +90,8 @@ export const FormEditProduct: React.FC<InFormEditProductProps> = ({ modaFormClos
                     urlImgNewProduct = await uploadImageFirebase(product.new_img_product);
                 }
 
-                const newProduct: InSendProductDB = {
+                const newProduct: InPatchProduct = {
+                    id: product.id,
                     barcode: product.barcode || '',
                     name: product.name,
                     description: product.description || '',
@@ -95,12 +99,13 @@ export const FormEditProduct: React.FC<InFormEditProductProps> = ({ modaFormClos
                     cost: Number(product.cost),
                     sale_price: Number(product.sale_price),
                     quantity: Number(product.quantity),
+                    active: product.active,
                     brand_id: Number(product.brand),
                     category_id: Number(product.category),
                     location_id: Number(product.location),
                 };
-                
-                const poductUpdated = await patchProduct(newProduct, product.id);
+
+                const poductUpdated = await patchProduct(newProduct);
                 // Aqui debemos acambiar a logica de edicion de producto NO creacion
                 if (poductUpdated.data) {
                     const createdData = poductUpdated.data[0];
@@ -280,7 +285,7 @@ export const FormEditProduct: React.FC<InFormEditProductProps> = ({ modaFormClos
                     </InputLabel>
                     <CardMedia
                         component={"img"}
-                        image={productSel.img_product!}
+                        image={productSelect.img_product}
                         sx={{
                             padding: 1,
                             height: 250,

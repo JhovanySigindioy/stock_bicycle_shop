@@ -14,3 +14,4 @@ export * from "./InSendProductDB";
 export * from "./customTable";
 export * from "./InDataSelectors";
 export * from "./InResProductDB";
+export * from "./InPatchProduct";

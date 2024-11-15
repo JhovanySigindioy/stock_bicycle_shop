@@ -5,6 +5,7 @@ export interface InSendProductDB {
     img_product: string;
     cost: number;
     sale_price: number;
+    active: boolean;
     quantity: number;
     brand_id: number;
     category_id: number;

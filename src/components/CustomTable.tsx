@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Paper, Typography, Box, Grid2, Checkbox } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Paper, Typography, Box } from '@mui/material';
 import Delete from '@mui/icons-material/Delete';
 
 import DriveFileRenameOutline from '@mui/icons-material/DriveFileRenameOutline';
@@ -37,7 +37,7 @@ export const CustomTable: React.FC<CustomTableProps> = ({ columns, rows, actions
                       {actions.map((action, index) => (
                         <IconButton
                           key={index} 
-                          onClick={() => action.onClick(row)}
+                          onClick={() => action.onClick(row.id)}
                           color={action.label === 'Delete' ? 'error' : 'primary'}
                           size="small"
                         >

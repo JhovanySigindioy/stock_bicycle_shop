@@ -1,10 +1,12 @@
 import axios, { isAxiosError } from "axios";
-import { InApiResProductCreated, InSendProductDB } from "../../interface";
+import { InApiResProductCreated, InPatchProduct } from "../../interface";
+
 
 const urlEndPoint: string = 'http://localhost:3000/api/v1/';
 
-export const patchProduct = async (product: InSendProductDB, id: number | string): Promise<InApiResProductCreated> => {
-    
+export const patchProduct = async (product: Partial<InPatchProduct>): Promise<InApiResProductCreated> => {
+    console.log("Estamos escaneadno el producto desde el Api: ", product);
+    const id: number | string = product.id!;
     try {
         const res = await axios.patch(`${urlEndPoint}products/${id}`, product, {
             headers: {
@@ -12,7 +14,7 @@ export const patchProduct = async (product: InSendProductDB, id: number | string
             }
         });
         return res.data
-    }catch (error: unknown) {
+    } catch (error: unknown) {
         let errorMessage = "";
         if (isAxiosError(error)) {
             errorMessage = error.response?.data || error.message;

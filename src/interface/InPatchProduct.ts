@@ -1,4 +1,4 @@
-export interface InResProductDB {
+export interface InPatchProduct {
     id: number | string;
     barcode: string;
     name: string;
@@ -6,8 +6,8 @@ export interface InResProductDB {
     img_product: string;
     cost: number;
     sale_price: number;
-    quantity: number;
     active: boolean;
+    quantity: number;
     brand_id: number;
     category_id: number;
     location_id: number;
