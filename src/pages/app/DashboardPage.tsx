@@ -48,7 +48,7 @@ export const DashboardPage: React.FC = () => {
 
     // UseEffect para obtener los productos al cargar el componente
     useEffect(() => {
-        if (token) {
+        if (token) { 
             dispatch(showLoading());  // Muestra el loading
             dispatch(fetchProducts())  // Despacha el thunk
                 .unwrap()  // Maneja el valor de la respuesta o el error

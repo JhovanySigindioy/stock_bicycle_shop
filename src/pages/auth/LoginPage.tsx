@@ -26,7 +26,7 @@ export const LoginPage: React.FC = () => {
                 email: values.email.trim(),
                 password: values.password.trim(),
             }
-
+            cleanValues;
             localStorage.setItem("dataUser", JSON.stringify(data));
             dispatch(login(data));
         }

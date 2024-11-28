@@ -1,8 +1,6 @@
-import React, { ChangeEvent, useState } from "react";
-import { InputBrowser } from "../../components";
+import React from "react";
 
 export const ReportsPage: React.FC = () => {
-
 
     return (
         <>

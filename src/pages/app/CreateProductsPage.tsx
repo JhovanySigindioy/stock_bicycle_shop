@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
-import { InActions, InColumns, InPatchProduct, InProduct } from "../../interface";
+import { InActions, InColumns, InPatchProduct } from "../../interface";
 import {
     CustomTable,
     FormProduct,
@@ -16,7 +16,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import { patchProduct } from "../../api/products";
 import { deleteProductState } from "../../store/slice";
-import { findNonSerializableValue } from "@reduxjs/toolkit";
 
 // Configuración inicial de la tabla y paginación
 const itemsPerPage = 9;

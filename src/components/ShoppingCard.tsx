@@ -8,9 +8,9 @@ import { InProduct } from "../interface";
 
 interface ShoppingCardProps {
     cartProducts: InProduct[];
-    onIncrease: (id: number) => void;
-    onDecrease: (id: number) => void;
-    onRemove: (id: number, quantity: number) => void;
+    onIncrease: (id: number | string) => void;
+    onDecrease: (id: number | string) => void;
+    onRemove: (id: number | string, quantity: number) => void;
     onPurchase: () => void;
 }
 
