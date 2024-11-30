@@ -25,18 +25,18 @@ const listItemsSidebarAdmin: InListItemsSidebar[] = [
         path: "/app/store",
         title: "Tienda",
     },
-    {
-        path: "/app/sales_history",
-        title: "Historial de ventas",
-    },
+    // {
+    //     path: "/app/sales_history",
+    //     title: "Historial de ventas",
+    // },
     {
         path: "/app/create_products",
         title: "Crear productos",
     },
-    {
-        path: "/app/reports",
-        title: "Reportes",
-    },
+    // {
+    //     path: "/app/reports",
+    //     title: "Reportes",
+    // },
 ];
 
 export const DashboardPage: React.FC = () => {

@@ -1,7 +1,7 @@
 import axios, { isAxiosError } from "axios";
 import { InApiResProductCreated, InSendProductDB } from "../../interface";
 
-const urlEndPoint: string = 'http://localhost:3000/api/v1/';
+const urlEndPoint: string = import.meta.env.VITE_API_BASE_URL;
 
 export const createProduct = async (product: InSendProductDB): Promise<InApiResProductCreated> => {
     try {

@@ -1,7 +1,7 @@
 import axios, { isAxiosError } from "axios";
 import { InApiResponse } from "../../interface";
 
-const urlEndpoint: string = "http://localhost:3000/api/v1/products/"
+const urlEndpoint: string = import.meta.env.VITE_API_BASE_URL;
 
 export const deleteProduct = async (id: number | string): Promise<InApiResponse> => {
     try {

@@ -5,7 +5,7 @@ import { InSelectorsState } from "../slice";
 
 
 
-const urlEndPoint: string = 'http://localhost:3000/api/v1/';
+const urlEndPoint: string = import.meta.env.VITE_API_BASE_URL;
 
 // Cambiamos el tipo de `formSelector` a `keyof SelectorsState`
 export const fetchDataSelectors = createAsyncThunk<InDataSelectors[], keyof InSelectorsState, { rejectValue: string }>(
