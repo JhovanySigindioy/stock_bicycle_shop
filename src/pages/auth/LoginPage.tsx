@@ -16,6 +16,7 @@ const data: InUser = {
 }
 //Fin
 
+
 export const LoginPage: React.FC = () => {
     const dispatch = useDispatch();
 
@@ -26,7 +27,7 @@ export const LoginPage: React.FC = () => {
                 email: values.email.trim(),
                 password: values.password.trim(),
             }
-            cleanValues;
+            cleanValues;//Esta linea de debe eliminar al implementar logica de Logueo
             localStorage.setItem("dataUser", JSON.stringify(data));
             dispatch(login(data));
         }

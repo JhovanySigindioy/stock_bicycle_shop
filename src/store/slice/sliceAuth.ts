@@ -3,7 +3,7 @@ import { InAuthState } from "../../interface";
 import { InUser } from "../../interface";
 
 const initialState: InAuthState = {
-    isAuthenticated: !!localStorage.getItem("dataUser"),
+    isAuthenticated: true,//!!localStorage.getItem("dataUser"),
     dataUser: JSON.parse(localStorage.getItem("dataUser") || "null") || {
         token: "",
         nameUser: "",

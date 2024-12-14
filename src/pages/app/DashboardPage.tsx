@@ -2,11 +2,11 @@ import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { DashboardLayout, SpinnerLoading } from "../../components";
-import { InListItemsSidebar } from "../../interface";
+import { InListItemsSidebar, InUser } from "../../interface";
 import { StorePage, CreateProductsPage, ReportsPage, SalesHistoryPage } from "./";
 import { AppDispatch, RootState } from "../../store";
 import { RoutesAdmin } from "../../router";
-import { hideLoading, showLoading } from "../../store/slice";
+import { hideLoading, login, showLoading } from "../../store/slice";
 import { fetchDataSelectors, fetchProducts } from "../../store/thunks";
 
 const listItemsSidebar: InListItemsSidebar[] = [
@@ -14,10 +14,10 @@ const listItemsSidebar: InListItemsSidebar[] = [
         path: "/app/store",
         title: "Tienda",
     },
-    {
-        path: "/app/sales_history",
-        title: "Historial de ventas",
-    }
+    // {
+    //     path: "/app/sales_history",
+    //     title: "Historial de ventas",
+    // }
 ];
 
 const listItemsSidebarAdmin: InListItemsSidebar[] = [
@@ -39,31 +39,46 @@ const listItemsSidebarAdmin: InListItemsSidebar[] = [
     // },
 ];
 
+//Creamos Usuario de Prueba, para alimetar REDUX
+const data: InUser = {
+    token: "abcdefg",
+    nameUser: "Wiliam Sigindioy",
+    rolUser: "admin"
+}
+//Fin
+
 export const DashboardPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { token, rolUser } = useSelector((state: RootState) => state.auth.dataUser);
     const { isLoading } = useSelector((state: RootState) => state.loading); // Estado de carga global
-    const {  error } = useSelector((state: RootState) => state.products); // Estado de productos
+    const { error } = useSelector((state: RootState) => state.products); // Estado de productos
 
 
     // UseEffect para obtener los productos al cargar el componente
     useEffect(() => {
-        if (token) { 
-            dispatch(showLoading());  // Muestra el loading
-            dispatch(fetchProducts())  // Despacha el thunk
-                .unwrap()  // Maneja el valor de la respuesta o el error
-                .catch(() => {
-                    dispatch(hideLoading());  // Oculta el loading si hay un error
-                })
-                .finally(() => {
-                    
-                    dispatch(hideLoading());  // Oculta el loading siempre
-                });
+        localStorage.setItem("dataUser", JSON.stringify(data));
+        dispatch(login(data));
+        const fetchData = async () => {
+            if (token) {
+                try {
+                    dispatch(showLoading()); // Muestra el loading
 
-                dispatch(fetchDataSelectors("categories"));
-                dispatch(fetchDataSelectors("brands"));
-                dispatch(fetchDataSelectors("locations"));
-        }
+                    // Espera a que todas las promesas se resuelvan
+                    await dispatch(fetchProducts()).unwrap(); // Maneja el valor de la respuesta
+                    await Promise.all([
+                        dispatch(fetchDataSelectors("categories")),
+                        dispatch(fetchDataSelectors("brands")),
+                        dispatch(fetchDataSelectors("locations")),
+                    ]);
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                } finally {
+                    dispatch(hideLoading()); // Oculta el loading siempre
+                }
+            }
+        };
+
+        fetchData(); // Llama a la función asíncrona
     }, [dispatch, token]);
 
     return (

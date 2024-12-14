@@ -1,5 +1,5 @@
 import { Box, Grid2 } from "@mui/material";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useCallback } from "react";
 import { NavBar, SideBar } from ".";
 import { InListItemsSidebar } from "../interface";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,13 +13,13 @@ export const DashboardLayout: React.FC<{ children: ReactNode, listItemsSidebar: 
     const { isMobilOpen } = useSelector((state: RootState) => state.sidebar);
     const dispatch = useDispatch();
 
-    const handleDrawerToggle = () => {
+    const handleDrawerToggle = useCallback(() => {
         dispatch(toggleSideBar());
-    };
+    },[]);
 
-    const handleLogout = () => {
+    const handleLogout = useCallback(() => {
         dispatch(logout());
-    }
+    },[dispatch]);
 
     return (
         <Box

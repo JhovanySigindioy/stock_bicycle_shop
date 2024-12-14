@@ -198,8 +198,6 @@ export const StorePage: React.FC = () => {
         <>
             <InputBrowser textValue={inputBrowser} handleOnChange={handleOnChange} />
             <Grid2 container display={"flex"} gap={1.5} marginBottom={3}>
-
-
                 {
                     paginatedProducts.map((product) => (
                         <CardProduct
@@ -209,7 +207,6 @@ export const StorePage: React.FC = () => {
                         />
                     ))
                 }
-
             </Grid2>
             <Pagination
                 currentPage={currentPage}
@@ -221,6 +218,9 @@ export const StorePage: React.FC = () => {
                     sx={{
                         width: 80,
                         height: 80,
+                        backgroundColor: "purple",
+                        border: "6px solid #D3D3D3",
+                        ":hover": { backgroundColor: "#4B0082" }
                     }}
                 >
                     <ShoppingCartIcon />

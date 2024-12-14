@@ -1,15 +1,16 @@
+import React from "react";
 import { Box, Divider, Drawer, Grid2, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar } from '@mui/material';
-import { TurnedInNot } from '@mui/icons-material';
+import { TurnedInNotOutlined } from '@mui/icons-material';
 import { Link as RouterLink } from "react-router-dom";
 import { InSideBar } from '../interface';
 
-export const SideBar: React.FC<InSideBar> = ({ drawerWidth = 240, mobileOpen, handleDrawerToggle, listItems }) => {
+export const SideBar: React.FC<InSideBar> = React.memo(({ drawerWidth = 240, mobileOpen, handleDrawerToggle, listItems }) => {
     const drawerContent = (
         <>
             <Toolbar>
-                <Grid2 container width={"100%"} justifyContent={"center"} alignItems={"center"}  padding={2}>
+                <Grid2 container width={"100%"} justifyContent={"center"} alignItems={"center"} padding={2}>
                     <img
-                        src="https://www.w3schools.com/howto/img_avatar.png" 
+                        src="https://www.w3schools.com/howto/img_avatar.png"
                         alt={"logo HIOSV"}
                         style={{ borderRadius: '5%', width: 90 }}
                     />
@@ -25,7 +26,7 @@ export const SideBar: React.FC<InSideBar> = ({ drawerWidth = 240, mobileOpen, ha
                             onClick={handleDrawerToggle}
                         >
                             <ListItemIcon>
-                                <TurnedInNot />
+                                <TurnedInNotOutlined></TurnedInNotOutlined>
                             </ListItemIcon>
                             <ListItemText primary={itemNav.title} />
                         </ListItemButton>
@@ -69,4 +70,4 @@ export const SideBar: React.FC<InSideBar> = ({ drawerWidth = 240, mobileOpen, ha
             </Drawer>
         </Box>
     );
-};
+});
